@@ -52,13 +52,17 @@ const WarehouseItem = ({ item }) => {
               {name}
               <FontAwesomeIcon
                 icon={faPenToSquare}
-                className="mx-2"
+                className="mx-2 icon"
                 onClick={() => {
                   setEditModale(true);
                   setEditItem(item);
                 }}
               />
-              <FontAwesomeIcon icon={faTrash} onClick={deleteItem} />
+              <FontAwesomeIcon
+                icon={faTrash}
+                className="icon"
+                onClick={deleteItem}
+              />
             </div>
           </Card.Title>
           <Card.Text>Quantity: {quantity}</Card.Text>

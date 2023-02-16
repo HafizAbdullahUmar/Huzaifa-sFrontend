@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/esm/Container";
 import useWarehouseStore from "../store/warehouseStore";
 import WarehouseItem from "./WarehouseItem";
 import Row from "react-bootstrap/Row";
 import AddItem from "./AddItem";
 import EditItem from "./EditItem";
+import Form from "react-bootstrap/Form";
 
 const Warehouse = () => {
-  const host = "http://192.168.10.2:5000";
-  const { items, setItems } = useWarehouseStore((state) => ({
+  const [searchValue, setSearchValue] = useState("");
+  const { items, setItems, host } = useWarehouseStore((state) => ({
     items: state.items,
-    addItem: state.addItem,
+    host: state.host,
     setItems: state.setItems,
   }));
   console.log(items);
@@ -28,6 +29,7 @@ const Warehouse = () => {
     getItems();
     // eslint-disable-next-line
   }, []);
+
   return (
     <>
       <Container>
@@ -36,9 +38,22 @@ const Warehouse = () => {
           <AddItem />
           <EditItem />
         </div>
+        <Container className="d-flex justify-content-center align-items-center my-3">
+          <h3>Search Items:</h3>
+          <Form.Control
+            type="text"
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
+        </Container>
         <Row className="gap-4 justify-content-center">
           {items.map((item) => {
-            return <WarehouseItem item={item} key={item._id} />;
+            if (item.name.toLowerCase().includes(searchValue.toLowerCase())) {
+              return <WarehouseItem item={item} key={item._id} />;
+            }
+            return null;
           })}
         </Row>
       </Container>

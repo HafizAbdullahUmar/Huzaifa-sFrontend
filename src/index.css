@@ -11,6 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-i {
+.icon {
   cursor: pointer;
+}
+.icon:hover {
+  color: rgba(0, 0, 0, 0.67);
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Container from "react-bootstrap/esm/Container";
 import Modal from "react-bootstrap/Modal";
@@ -9,43 +9,46 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import useSaleStore from "../store/saleStore";
 
-const Sellitem = () => {
+const Purchaseitem = () => {
   const [show, setShow] = useState(false);
-  const submitRef = useRef(null);
   const [item, setItem] = useState({
     name: "",
     quantity: "",
     price: "",
-    customer: "",
+    party: "",
   });
-  const { host, sales, setSales } = useSaleStore((state) => ({
+  const { items, addItem, setItems, host } = useWarehouseStore((state) => ({
+    items: state.items,
+    addItem: state.addItem,
+    setItems: state.setItems,
     host: state.host,
-    sales: state.sales,
-    setSales: state.setSales,
   }));
-
+  const { setPurchases, purchases } = useSaleStore((state) => ({
+    purchases: state.purchases,
+    setPurchases: state.setPurchases,
+  }));
   const handleClose = () => {
     setShow(false);
     setItem({
       name: "",
       quantity: "",
       price: "",
-      customer: "",
+      party: "",
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { name, quantity, price, customer } = item;
-    fetch(`${host}/api/items/sellitem`, {
-      method: "PUT",
+  const handleSubmit = async () => {
+    const { name, quantity, price, party } = item;
+    fetch(`${host}/api/items/purchaseitem`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, quantity, price, customer }),
+      body: JSON.stringify({ name, quantity, price }),
     }).then(async (res) => {
       const json = await res.json();
       if (!json.success) {
+        console.log("failed", json);
         return toast.error(json.error, {
           position: "bottom-center",
           autoClose: 1000,
@@ -58,7 +61,7 @@ const Sellitem = () => {
         });
       } else {
         const totalPrice = price * quantity;
-        const newRes = await fetch(`${host}/api/sales/addsale`, {
+        const newRes = await fetch(`${host}/api/sales/addpurchase`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +70,7 @@ const Sellitem = () => {
             name,
             price: totalPrice,
             quantity,
-            customer,
+            party,
           }),
         });
         const newJson = await newRes.json();
@@ -88,12 +91,13 @@ const Sellitem = () => {
             name: "",
             quantity: "",
             price: "",
-            customer: "",
+            party: "",
           });
-          const newSales = JSON.parse(JSON.stringify(sales));
-          newSales.push(newJson.savedSale);
-          setSales(newSales);
-          toast.success("Sold Successfully", {
+          const newPurchases = JSON.parse(JSON.stringify(purchases));
+          newPurchases.push(newJson.savedPurchase);
+          setPurchases(newPurchases);
+
+          toast.success("Purchased Successfully", {
             position: "bottom-center",
             autoClose: 1000,
             hideProgressBar: true,
@@ -107,6 +111,7 @@ const Sellitem = () => {
       }
     });
   };
+
   const onChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
   };
@@ -114,29 +119,28 @@ const Sellitem = () => {
   return (
     <>
       <Button
-        className="mx-3 pill-button rounded-5"
-        variant="danger"
+        className="pill-button rounded-5"
+        variant="primary"
         onClick={() => {
           setShow(true);
         }}
       >
-        <FontAwesomeIcon icon={faCirclePlus} size="lg" /> Add Sale
+        <FontAwesomeIcon icon={faCirclePlus} size="lg" /> Add Purchase
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Sell Item</Modal.Title>
+          <Modal.Title>Purchase Item</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="customer">
-              <Form.Label>Customer Name:</Form.Label>
+          <Form>
+            <Form.Group className="mb-3" controlId="party">
+              <Form.Label>Party Name:</Form.Label>
               <Form.Control
                 type="text"
-                name="customer"
-                value={item.customer}
+                name="party"
+                value={item.party}
                 onChange={onChange}
-                required
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="name">
@@ -145,7 +149,6 @@ const Sellitem = () => {
                 type="text"
                 name="name"
                 value={item.name}
-                required
                 onChange={onChange}
               />
             </Form.Group>
@@ -156,8 +159,8 @@ const Sellitem = () => {
                 type="number"
                 name="quantity"
                 value={item.quantity}
-                required
                 onChange={onChange}
+                min={1}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="price">
@@ -165,19 +168,11 @@ const Sellitem = () => {
               <Form.Control
                 type="number"
                 name="price"
-                required
                 value={item.price}
                 onChange={onChange}
+                min={1}
               />
             </Form.Group>
-            <Button
-              variant="primary"
-              className="d-none"
-              type="submit"
-              ref={submitRef}
-            >
-              Submit
-            </Button>
           </Form>
           <p className="h4 tw-normal">
             Total Price:{" "}
@@ -192,9 +187,7 @@ const Sellitem = () => {
           </Button>
           <Button
             variant="primary"
-            onClick={() => {
-              submitRef.current.click();
-            }}
+            onClick={handleSubmit}
             disabled={item.price <= 0 || item.quantity.price <= 0}
           >
             Confirm
@@ -205,4 +198,4 @@ const Sellitem = () => {
   );
 };
 
-export default Sellitem;
+export default Purchaseitem;

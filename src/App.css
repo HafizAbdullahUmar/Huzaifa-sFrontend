@@ -1,38 +1,49 @@
-.App {
-  text-align: center;
+.sale-col-1 {
+  border-right: 2px dotted gray;
+  max-height: 250px;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.sale-price {
+  font-size: 2rem;
+  font-weight: bold;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.pill-button {
+  font-size: 1rem !important;
+  padding: 10px 2rem !important;
+  font-weight: bold !important;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+body {
+  font-family: 'Courier New', Courier, monospace;
 }
-
-.App-link {
-  color: #61dafb;
+.sale-div {
+  background-color: rgba(225, 217, 207, 0.178);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(212, 212, 212, 0.7);
+  padding: 10px;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.trans .nav-link.active {
+  font-weight: 600;
+}
+.trans .nav-link {
+  font-size: 20px !important;
+  color: rgb(0, 0, 0);
+  
+}
+.trans-item {
+  width: 80% !important;
+}
+.trans-item .trans-row {
+  height: 100%;
+  margin-bottom: -10px;
+  width: 100%;
+  font-size: 1.2rem;
+}
+.purchase-price {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+.purchase-div {
+  background-color: rgba(224, 224, 238, 0.266);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(212, 212, 212, 0.7);
+  padding: 10px;
 }

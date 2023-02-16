@@ -24,8 +24,11 @@ function NavbarComponent() {
             <LinkContainer to="/warehouse">
               <Nav.Link>Warehouse</Nav.Link>
             </LinkContainer>
-            <LinkContainer to={"/transactions"}>
-              <Nav.Link>Transactions</Nav.Link>
+            <LinkContainer to={"/sale"}>
+              <Nav.Link>Sales</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to={"/owner"}>
+              <Nav.Link>Owner</Nav.Link>
             </LinkContainer>
             <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
