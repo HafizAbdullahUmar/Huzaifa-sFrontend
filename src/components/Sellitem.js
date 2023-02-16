@@ -16,7 +16,7 @@ const Sellitem = () => {
     name: "",
     quantity: "",
     price: "",
-    customer: "",
+    party: "",
   });
   const { host, sales, setSales } = useSaleStore((state) => ({
     host: state.host,
@@ -30,19 +30,19 @@ const Sellitem = () => {
       name: "",
       quantity: "",
       price: "",
-      customer: "",
+      party: "",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, quantity, price, customer } = item;
+    const { name, quantity, price, party } = item;
     fetch(`${host}/api/items/sellitem`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, quantity, price, customer }),
+      body: JSON.stringify({ name, quantity, price, party }),
     }).then(async (res) => {
       const json = await res.json();
       if (!json.success) {
@@ -67,7 +67,7 @@ const Sellitem = () => {
             name,
             price: totalPrice,
             quantity,
-            customer,
+            party,
           }),
         });
         const newJson = await newRes.json();
@@ -88,7 +88,7 @@ const Sellitem = () => {
             name: "",
             quantity: "",
             price: "",
-            customer: "",
+            party: "",
           });
           const newSales = JSON.parse(JSON.stringify(sales));
           newSales.push(newJson.savedSale);
@@ -129,12 +129,12 @@ const Sellitem = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="customer">
-              <Form.Label>Customer Name:</Form.Label>
+            <Form.Group className="mb-3" controlId="party">
+              <Form.Label>Party Name:</Form.Label>
               <Form.Control
                 type="text"
-                name="customer"
-                value={item.customer}
+                name="party"
+                value={item.party}
                 onChange={onChange}
                 required
               />

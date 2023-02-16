@@ -37,7 +37,6 @@ const WarehouseItem = ({ item }) => {
         theme: "light",
       });
     });
-    console.log("Deleting Item with id ", item._id);
     const tempItems = JSON.parse(JSON.stringify(items));
     const newItems = tempItems.filter((tempItem) => tempItem._id !== item._id);
     setItems(newItems);

@@ -14,7 +14,6 @@ const Warehouse = () => {
     host: state.host,
     setItems: state.setItems,
   }));
-  console.log(items);
   const getItems = async () => {
     const response = await fetch(`${host}/api/items/fetchallitems`, {
       method: "GET",

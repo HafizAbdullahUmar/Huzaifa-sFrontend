@@ -7,8 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Sale from "./components/Sale";
 import PurchaseChart from "./components/PurchaseChart";
+import Owner from "./components/Owner";
+import useWarehouseStore from "./store/warehouseStore";
 
 function App() {
+  const { isLoggedIn } = useWarehouseStore((state) => ({
+    isLoggedIn: state.isLoggedIn,
+  }));
   return (
     <>
       <Router>
@@ -18,7 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/warehouse" element={<Warehouse />} />
           <Route path="/sale" element={<Sale />} />
-          <Route path="/owner" element={<PurchaseChart />} />
+          {isLoggedIn ? <Route path="/owner" element={<Owner />} /> : ""}
         </Routes>
       </Router>
     </>

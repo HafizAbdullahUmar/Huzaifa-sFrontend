@@ -59,13 +59,19 @@ const PurchaseChart = () => {
       return obj;
     }
   });
+  const todayData = data.filter((obj) => {
+    if (moment(obj.date).isSame(new Date(), "day")) {
+      return obj;
+    }
+  });
   let dataToShow = [];
   if (dataValue === "This Month") {
     dataToShow = thisMonthData;
   } else if (dataValue === "This Year") {
     dataToShow = thisYearData;
+  } else if (dataValue === "Today") {
+    dataToShow = todayData;
   }
-  console.log("dataToShow::::::", dataToShow);
   if (dataToShow.length !== 0) {
     total = dataToShow
       .map((obj) => {
@@ -108,10 +114,17 @@ const PurchaseChart = () => {
             >
               This Year
             </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                setDataValue("Today");
+              }}
+            >
+              Today
+            </Dropdown.Item>
           </DropdownButton>
         </div>
         <Row className="pt-4">
-          <Col md="2" className="sale-col-1">
+          <Col md="3" className="sale-col-1">
             <p className="purchase-price">
               Rs{" "}
               {new Intl.NumberFormat("en-IN", {
@@ -122,11 +135,13 @@ const PurchaseChart = () => {
               Total Purchase{" "}
               {dataValue === "This Month"
                 ? `(${moment().format("MMM")})`
-                : `(${moment().format("YYYY")})`}
+                : dataValue === "This Year"
+                ? `(${moment().format("YYYY")})`
+                : `(${moment().format("Do MMM")})`}
             </p>
           </Col>
           <Col>
-            <Container className="d-flex justify-content-center">
+            <Container className="d-flex justify-content-start">
               <LineChart
                 width={400}
                 height={200}

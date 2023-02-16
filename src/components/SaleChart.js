@@ -72,7 +72,6 @@ const SaleChart = () => {
   } else if (dataValue === "Today") {
     dataToShow = todayData;
   }
-  console.log("dataToShow::::::", dataToShow);
   if (dataToShow.length !== 0) {
     total = dataToShow
       .map((obj) => {

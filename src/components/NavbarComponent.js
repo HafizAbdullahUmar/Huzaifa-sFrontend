@@ -1,10 +1,57 @@
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import { LinkContainer } from "react-router-bootstrap";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+import { toast } from "react-toastify";
+import useWarehouseStore from "../store/warehouseStore";
 
 function NavbarComponent() {
+  const [show, setShow] = useState(false);
+  const [id, setId] = useState({
+    email: "",
+    password: "",
+  });
+  const { isLoggedIn, setIsLoggedIn } = useWarehouseStore((state) => ({
+    isLoggedIn: state.isLoggedIn,
+    setIsLoggedIn: state.setIsLoggedIn,
+  }));
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const onChange = (e) => {
+    setId({ ...id, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      id.email === "HuzaifaNasir@lmao.lmao" &&
+      id.password === "lmao_was_never_true"
+    ) {
+      setIsLoggedIn(true);
+      setShow(false);
+      setId({
+        email: "",
+        password: "",
+      });
+    } else {
+      toast.error("Wrong Credentials", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <Navbar
       collapseOnSelect
@@ -27,26 +74,75 @@ function NavbarComponent() {
             <LinkContainer to={"/sale"}>
               <Nav.Link>Sales</Nav.Link>
             </LinkContainer>
-            <LinkContainer to={"/owner"}>
-              <Nav.Link>Owner</Nav.Link>
-            </LinkContainer>
-            <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown>
+            {isLoggedIn ? (
+              <LinkContainer to={"/owner"}>
+                <Nav.Link>Owner</Nav.Link>
+              </LinkContainer>
+            ) : (
+              ""
+            )}
           </Nav>
           <Nav>
-            <Nav.Link href="#deets">More deets</Nav.Link>
-            <Nav.Link eventKey={2} href="#memes">
-              Dank memes
-            </Nav.Link>
+            {!isLoggedIn ? (
+              <>
+                <Button variant="primary" onClick={handleShow}>
+                  Login
+                </Button>
+
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Log In</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {" "}
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group className="mb-3" controlId="email">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control
+                          type="email"
+                          name="email"
+                          value={id.email}
+                          onChange={onChange}
+                          placeholder="Enter email"
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3" controlId="password">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          name="password"
+                          value={id.password}
+                          onChange={onChange}
+                          placeholder="Password"
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Close
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setId({
+                    email: "",
+                    password: "",
+                  });
+                  setIsLoggedIn(false);
+                }}
+              >
+                LogOut
+              </Button>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

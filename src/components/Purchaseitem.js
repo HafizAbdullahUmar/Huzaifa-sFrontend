@@ -11,6 +11,7 @@ import useSaleStore from "../store/saleStore";
 
 const Purchaseitem = () => {
   const [show, setShow] = useState(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [item, setItem] = useState({
     name: "",
     quantity: "",
@@ -39,6 +40,7 @@ const Purchaseitem = () => {
 
   const handleSubmit = async () => {
     const { name, quantity, price, party } = item;
+    setIsSubmitDisabled(true);
     fetch(`${host}/api/items/purchaseitem`, {
       method: "POST",
       headers: {
@@ -48,7 +50,7 @@ const Purchaseitem = () => {
     }).then(async (res) => {
       const json = await res.json();
       if (!json.success) {
-        console.log("failed", json);
+        setIsSubmitDisabled(false);
         return toast.error(json.error, {
           position: "bottom-center",
           autoClose: 1000,
@@ -75,6 +77,7 @@ const Purchaseitem = () => {
         });
         const newJson = await newRes.json();
         if (!newJson.success) {
+          setIsSubmitDisabled(false);
           return toast.error(newJson.error, {
             position: "bottom-center",
             autoClose: 1000,
@@ -86,6 +89,7 @@ const Purchaseitem = () => {
             theme: "light",
           });
         } else {
+          setIsSubmitDisabled(false);
           setShow(false);
           setItem({
             name: "",
@@ -188,7 +192,9 @@ const Purchaseitem = () => {
           <Button
             variant="primary"
             onClick={handleSubmit}
-            disabled={item.price <= 0 || item.quantity.price <= 0}
+            disabled={
+              (item.price <= 0 || item.quantity.price <= 0) && isSubmitDisabled
+            }
           >
             Confirm
           </Button>

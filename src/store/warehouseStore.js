@@ -5,6 +5,12 @@ const warehouseStore = (set) => ({
   items: [],
   editItem: "",
   editModale: false,
+  isLoggedIn: false,
+  setIsLoggedIn: (bool) => {
+    set((state) => ({
+      isLoggedIn: bool,
+    }));
+  },
   setEditModale: (bool) => {
     set((state) => ({
       editModale: bool,

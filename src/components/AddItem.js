@@ -71,9 +71,7 @@ const AddItem = () => {
           });
         }
       })
-      .catch((err) => {
-        console.log("err", err);
-      });
+      .catch((err) => {});
   };
 
   const onChange = (e) => {

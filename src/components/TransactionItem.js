@@ -6,7 +6,7 @@ import Row from "react-bootstrap/esm/Row";
 
 const TransactionItem = (props) => {
   const { type, color, sale } = props;
-  const { name, price, quantity, date, customer } = sale;
+  const { name, price, quantity, date, party } = sale;
 
   return (
     <>
@@ -21,7 +21,7 @@ const TransactionItem = (props) => {
             </p>
           </Col>
           <Col md={2}>
-            <p className="item-type fw-bold">{customer}</p>
+            <p className="item-type fw-bold">{party}</p>
           </Col>
           <Col md={3}>
             <p className="item-name">
@@ -31,12 +31,12 @@ const TransactionItem = (props) => {
           </Col>
           <Col md={2}>
             <p className="item-price">
-              Price(Rs): <span className="fw-bold">{price}</span>
+              <span className="fw-bold">{price}</span>
             </p>
           </Col>
           <Col md={2}>
             <p className="item-quantity">
-              Quantity: <span className="fw-bold">{quantity}</span>
+              <span className="fw-bold">{quantity}</span>
             </p>
           </Col>
         </Row>
