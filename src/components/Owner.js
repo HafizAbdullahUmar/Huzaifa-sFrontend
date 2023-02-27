@@ -1,26 +1,16 @@
-import moment from "moment";
 import React from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import { useNavigate } from "react-router-dom";
 import useSaleStore from "../store/saleStore";
-import useWarehouseStore from "../store/warehouseStore";
 import PurchaseChart from "./PurchaseChart";
 import SaleChart from "./SaleChart";
 import TransactionItem from "./TransactionItem";
 
 const Owner = () => {
-  const navigate = useNavigate();
-  const { sales, setSales, purchases, setPurchases, host } = useSaleStore(
-    (state) => ({
-      host: state.host,
-      sales: state.sales,
-      purchases: state.purchases,
-      setSales: state.setSales,
-      setPurchases: state.setPurchases,
-    })
-  );
+  const { purchases } = useSaleStore((state) => ({
+    purchases: state.purchases,
+  }));
 
   return (
     <>
@@ -67,8 +57,8 @@ const Owner = () => {
             return (
               <TransactionItem
                 key={purchase.id}
-                sale={purchase}
-                type="Purchase"
+                sOrP={purchase}
+                type="P"
                 color={
                   i % 2 === 0 ? "rgb(240, 240, 240)" : "rgb(251, 251, 251)"
                 }

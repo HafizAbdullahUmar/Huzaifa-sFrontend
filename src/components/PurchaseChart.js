@@ -53,16 +53,19 @@ const PurchaseChart = () => {
     if (moment(obj.date).isSame(new Date(), "month")) {
       return obj;
     }
+    return false;
   });
   const thisYearData = data.filter((obj) => {
     if (moment(obj.date).isSame(new Date(), "year")) {
       return obj;
     }
+    return false;
   });
   const todayData = data.filter((obj) => {
     if (moment(obj.date).isSame(new Date(), "day")) {
       return obj;
     }
+    return false;
   });
   let dataToShow = [];
   if (dataValue === "This Month") {

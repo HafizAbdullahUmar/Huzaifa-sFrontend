@@ -193,7 +193,7 @@ const Purchaseitem = () => {
             variant="primary"
             onClick={handleSubmit}
             disabled={
-              (item.price <= 0 || item.quantity.price <= 0) && isSubmitDisabled
+              (item.price <= 0 || item.quantity <= 0) && isSubmitDisabled
             }
           >
             Confirm

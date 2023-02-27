@@ -15,6 +15,8 @@ function NavbarComponent() {
     email: "",
     password: "",
   });
+  const secretEmail = "1234";
+  const secretPassword = "1234";
   const { isLoggedIn, setIsLoggedIn } = useWarehouseStore((state) => ({
     isLoggedIn: state.isLoggedIn,
     setIsLoggedIn: state.setIsLoggedIn,
@@ -28,10 +30,7 @@ function NavbarComponent() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      id.email === "HuzaifaNasir@lmao.lmao" &&
-      id.password === "lmao_was_never_true"
-    ) {
+    if (id.email === secretEmail && id.password === secretPassword) {
       setIsLoggedIn(true);
       setShow(false);
       setId({

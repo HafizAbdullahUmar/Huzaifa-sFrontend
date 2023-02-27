@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Container from "react-bootstrap/esm/Container";
 import useSaleStore from "../store/saleStore";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
 import TransactionItem from "./TransactionItem";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 
 const Sale = () => {
-  const [key, setKey] = useState("sales");
-  const { sales, setSales, purchases, setPurchases, host } = useSaleStore(
-    (state) => ({
-      host: state.host,
-      sales: state.sales,
-      purchases: state.purchases,
-      setSales: state.setSales,
-      setPurchases: state.setPurchases,
-    })
-  );
+  const { sales, setSales, setPurchases, host } = useSaleStore((state) => ({
+    host: state.host,
+    sales: state.sales,
+    setSales: state.setSales,
+    setPurchases: state.setPurchases,
+  }));
   const getSales = async () => {
     const response = await fetch(`${host}/api/sales/fetchallsales`, {
       method: "GET",
@@ -54,7 +48,7 @@ const Sale = () => {
             style={{ backgroundColor: "black", color: "white" }}
           >
             <Row className="trans-row">
-              <Col md={3}>
+              <Col md={2}>
                 <p className="item-date">Date</p>
               </Col>
               <Col md={2}>
@@ -71,9 +65,14 @@ const Sale = () => {
                   <span className="fw-bold">Price</span>
                 </p>
               </Col>
-              <Col md={2}>
+              <Col md={1}>
                 <p className="item-quantity">
                   <span className="fw-bold">Quantity</span>
+                </p>
+              </Col>
+              <Col md={2}>
+                <p className="item-status">
+                  <span className="fw-bold">Status</span>
                 </p>
               </Col>
             </Row>
@@ -82,8 +81,8 @@ const Sale = () => {
             return (
               <TransactionItem
                 key={sale.id}
-                sale={sale}
-                type="Sale"
+                sOrP={sale}
+                type="S"
                 color={
                   i % 2 === 0 ? "rgb(240, 240, 240)" : "rgb(251, 251, 251)"
                 }

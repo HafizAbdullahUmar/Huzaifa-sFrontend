@@ -6,7 +6,6 @@ import Warehouse from "./components/Warehouse";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Sale from "./components/Sale";
-import PurchaseChart from "./components/PurchaseChart";
 import Owner from "./components/Owner";
 import useWarehouseStore from "./store/warehouseStore";
 

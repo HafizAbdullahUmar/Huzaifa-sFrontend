@@ -12,8 +12,7 @@ const AddItem = () => {
     quantity: 0,
     price: 0,
   });
-  const { items, addItem, setItems, host } = useWarehouseStore((state) => ({
-    addItem: state.addItem,
+  const { items, setItems, host } = useWarehouseStore((state) => ({
     items: state.items,
     host: state.host,
     setItems: state.setItems,
