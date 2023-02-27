@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Container from "react-bootstrap/esm/Container";
 import Modal from "react-bootstrap/Modal";
@@ -8,6 +8,8 @@ import useWarehouseStore from "../store/warehouseStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import useSaleStore from "../store/saleStore";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const Sellitem = () => {
   const [show, setShow] = useState(false);
@@ -18,11 +20,20 @@ const Sellitem = () => {
     price: "",
     party: "",
   });
+  const { itemNames, getItemNames } = useWarehouseStore((state) => ({
+    itemNames: state.itemNames,
+    getItemNames: state.getItemNames,
+  }));
   const { host, sales, setSales } = useSaleStore((state) => ({
     host: state.host,
     sales: state.sales,
     setSales: state.setSales,
   }));
+
+  useEffect(() => {
+    getItemNames();
+    // eslint-disable-next-line
+  }, []);
 
   const handleClose = () => {
     setShow(false);
@@ -125,7 +136,7 @@ const Sellitem = () => {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Sell Item</Modal.Title>
+          <Modal.Title>Sells Item</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
@@ -141,12 +152,12 @@ const Sellitem = () => {
             </Form.Group>
             <Form.Group className="mb-3" controlId="name">
               <Form.Label>Item Name:</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                value={item.name}
-                required
-                onChange={onChange}
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={itemNames}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="" />}
               />
             </Form.Group>
 
