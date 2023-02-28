@@ -89,8 +89,8 @@ const PurchaseChart = () => {
       Sale: parseInt(obj.price),
       date:
         dataValue === "This Month"
-          ? moment(obj.date).format("Do")
-          : moment(obj.date).format("MMM"),
+          ? moment(obj.date).format("D")
+          : moment(obj.date).format("MM"),
     };
   });
   return (

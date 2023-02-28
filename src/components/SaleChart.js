@@ -90,8 +90,8 @@ const SaleChart = () => {
       //   date: moment(obj.date).get("date") + "" + moment(obj.date).get("month"),
       date:
         dataValue === "This Month"
-          ? moment(obj.date).format("Do")
-          : moment(obj.date).format("MMM"),
+          ? moment(obj.date).format("D")
+          : moment(obj.date).format("M"),
     };
   });
   //   const data = [

@@ -86,10 +86,6 @@ const Sellitem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     getBalance();
-    if (!move) {
-      console.log("we did it", move);
-      return false;
-    }
     const { name, quantity, price, party } = item;
     console.log(item);
     fetch(`${host}/api/items/sellitem`, {

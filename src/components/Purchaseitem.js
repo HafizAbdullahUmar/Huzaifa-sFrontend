@@ -36,6 +36,7 @@ const Purchaseitem = () => {
   }, []);
   const handleClose = () => {
     setShow(false);
+    setGave("");
     setItem({
       name: "",
       quantity: "",
@@ -82,10 +83,7 @@ const Purchaseitem = () => {
   const handleSubmit = async () => {
     const { name, quantity, price, party } = item;
     getBalance();
-    if (!move) {
-      console.log("we did it", move);
-      return false;
-    }
+
     setIsSubmitDisabled(true);
 
     fetch(`${host}/api/items/purchaseitem`, {
@@ -97,6 +95,7 @@ const Purchaseitem = () => {
     }).then(async (res) => {
       const json = await res.json();
       if (!json.success) {
+        console.log(item);
         setIsSubmitDisabled(false);
         return toast.error(json.error, {
           position: "bottom-center",
@@ -165,6 +164,7 @@ const Purchaseitem = () => {
 
   const onChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
+    console.log(item);
   };
 
   return (
@@ -197,20 +197,20 @@ const Purchaseitem = () => {
             <Form.Group className="mb-3" controlId="name">
               <Form.Label>Item Name:</Form.Label>
               <Autocomplete
-                disablePortal
-                onChange={(event, value) => {
-                  const e = {
-                    target: {
-                      value: value,
-                      name: "name",
-                    },
-                  };
-                  onChange(e);
-                }}
+                freeSolo
                 id="combo-box-demo"
                 options={itemNames}
                 sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="" />}
+                renderInput={(params) => (
+                  <TextField
+                    name="name"
+                    onChange={(e, value) => {
+                      onChange(e);
+                    }}
+                    {...params}
+                    label=""
+                  />
+                )}
               />
             </Form.Group>
 
