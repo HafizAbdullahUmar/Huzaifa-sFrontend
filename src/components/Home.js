@@ -2,10 +2,10 @@ import React from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import PurchaseChart from "./PurchaseChart";
 import Purchaseitem from "./Purchaseitem";
 import SaleChart from "./SaleChart";
 import Sellitem from "./Sellitem";
+import YouwillPay from "./YouwillPay";
 
 const Home = () => {
   return (
@@ -17,6 +17,11 @@ const Home = () => {
       <Row className="ps-5 align-items-center justify-content-center">
         <Col md="6">
           <SaleChart />
+        </Col>
+      </Row>
+      <Row>
+        <Col md="6">
+          <YouwillPay />
         </Col>
       </Row>
     </>

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/esm/Button";
-import Container from "react-bootstrap/esm/Container";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { toast } from "react-toastify";
@@ -13,6 +12,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 const Sellitem = () => {
   const [show, setShow] = useState(false);
+  const [move, setMove] = useState(false);
+  const [recieved, setRecieved] = useState("");
   const submitRef = useRef(null);
   const [item, setItem] = useState({
     name: "",
@@ -20,6 +21,7 @@ const Sellitem = () => {
     price: "",
     party: "",
   });
+
   const { itemNames, getItemNames } = useWarehouseStore((state) => ({
     itemNames: state.itemNames,
     getItemNames: state.getItemNames,
@@ -37,6 +39,7 @@ const Sellitem = () => {
 
   const handleClose = () => {
     setShow(false);
+    setRecieved("");
     setItem({
       name: "",
       quantity: "",
@@ -44,10 +47,51 @@ const Sellitem = () => {
       party: "",
     });
   };
+  const getBalance = () => {
+    const { price, quantity, party } = item;
+    const left = quantity * price - recieved;
 
+    fetch(`${host}/api/parties/updateparty`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: party, dues: left }),
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        if (!json.success) {
+          console.log(json);
+          toast.error(json.error, {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          setMove(false);
+        } else {
+          console.log("its tro tho");
+          setMove(true);
+        }
+      })
+      .catch((err) => {
+        setMove(false);
+        console.log("hi");
+      });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    getBalance();
+    if (!move) {
+      console.log("we did it", move);
+      return false;
+    }
     const { name, quantity, price, party } = item;
+    console.log(item);
     fetch(`${host}/api/items/sellitem`, {
       method: "PUT",
       headers: {
@@ -153,6 +197,16 @@ const Sellitem = () => {
             <Form.Group className="mb-3" controlId="name">
               <Form.Label>Item Name:</Form.Label>
               <Autocomplete
+                onChange={(event, value) => {
+                  const e = {
+                    target: {
+                      value: value,
+                      name: "name",
+                    },
+                  };
+                  onChange(e);
+                }}
+                name="name"
                 disablePortal
                 id="combo-box-demo"
                 options={itemNames}
@@ -181,6 +235,24 @@ const Sellitem = () => {
                 onChange={onChange}
               />
             </Form.Group>
+            <p className="h5 tw-normal">
+              Total Price:{" "}
+              {new Intl.NumberFormat("en-IN", {
+                maximumSignificantDigits: 3,
+              }).format(item.price * item.quantity)}
+            </p>
+            <Form.Group className="mb-3" controlId="recieved">
+              <Form.Label>Recieved:</Form.Label>
+              <Form.Control
+                type="number"
+                name="recieved"
+                required
+                value={recieved}
+                onChange={(e) => {
+                  setRecieved(e.target.value);
+                }}
+              />
+            </Form.Group>
             <Button
               variant="primary"
               className="d-none"
@@ -190,12 +262,6 @@ const Sellitem = () => {
               Submit
             </Button>
           </Form>
-          <p className="h4 tw-normal">
-            Total Price:{" "}
-            {new Intl.NumberFormat("en-IN", {
-              maximumSignificantDigits: 3,
-            }).format(item.price * item.quantity)}
-          </p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

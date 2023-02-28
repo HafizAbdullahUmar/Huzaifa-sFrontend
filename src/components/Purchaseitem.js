@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/esm/Button";
-import Container from "react-bootstrap/esm/Container";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { toast } from "react-toastify";
@@ -12,6 +11,8 @@ import { Autocomplete, TextField } from "@mui/material";
 
 const Purchaseitem = () => {
   const [show, setShow] = useState(false);
+  const [move, setMove] = useState(false);
+  const [gave, setGave] = useState("");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [item, setItem] = useState({
     name: "",
@@ -42,10 +43,51 @@ const Purchaseitem = () => {
       party: "",
     });
   };
+  const getBalance = () => {
+    const { price, quantity, party } = item;
+    const left = -(quantity * price - gave);
 
+    fetch(`${host}/api/parties/updateparty`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: party, dues: left }),
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        if (!json.success) {
+          console.log(json);
+          toast.error(json.error, {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          setMove(false);
+        } else {
+          console.log("its tro tho");
+          setMove(true);
+        }
+      })
+      .catch((err) => {
+        setMove(false);
+        console.log("hi");
+      });
+  };
   const handleSubmit = async () => {
     const { name, quantity, price, party } = item;
+    getBalance();
+    if (!move) {
+      console.log("we did it", move);
+      return false;
+    }
     setIsSubmitDisabled(true);
+
     fetch(`${host}/api/items/purchaseitem`, {
       method: "POST",
       headers: {
@@ -156,6 +198,15 @@ const Purchaseitem = () => {
               <Form.Label>Item Name:</Form.Label>
               <Autocomplete
                 disablePortal
+                onChange={(event, value) => {
+                  const e = {
+                    target: {
+                      value: value,
+                      name: "name",
+                    },
+                  };
+                  onChange(e);
+                }}
                 id="combo-box-demo"
                 options={itemNames}
                 sx={{ width: 300 }}
@@ -184,12 +235,24 @@ const Purchaseitem = () => {
               />
             </Form.Group>
           </Form>
-          <p className="h4 tw-normal">
+          <p className="h5 tw-normal">
             Total Price:{" "}
             {new Intl.NumberFormat("en-IN", {
               maximumSignificantDigits: 3,
             }).format(item.price * item.quantity)}
           </p>
+          <Form.Group className="mb-3" controlId="gave">
+            <Form.Label>Gave:</Form.Label>
+            <Form.Control
+              type="number"
+              name="gave"
+              required
+              value={gave}
+              onChange={(e) => {
+                setGave(e.target.value);
+              }}
+            />
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
