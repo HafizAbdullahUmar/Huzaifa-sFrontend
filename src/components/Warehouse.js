@@ -9,17 +9,19 @@ import Form from "react-bootstrap/Form";
 
 const Warehouse = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { items, setItems, host } = useWarehouseStore((state) => ({
+  const { items, setItems, host, store } = useWarehouseStore((state) => ({
     items: state.items,
     host: state.host,
     setItems: state.setItems,
+    store: state.store,
   }));
   const getItems = async () => {
     const response = await fetch(`${host}/api/items/fetchallitems`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ store }),
     });
     const json = await response.json();
     setItems(json);
@@ -28,6 +30,10 @@ const Warehouse = () => {
     getItems();
     // eslint-disable-next-line
   }, []);
+  useEffect(() => {
+    getItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store]);
 
   return (
     <>

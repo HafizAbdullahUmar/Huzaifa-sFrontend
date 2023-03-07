@@ -15,6 +15,7 @@ import moment from "moment";
 import { useLocation } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import useWarehouseStore from "../store/warehouseStore";
 
 const SaleChart = () => {
   const location = useLocation();
@@ -25,12 +26,16 @@ const SaleChart = () => {
     host: state.host,
     setSales: state.setSales,
   }));
+  const { store } = useWarehouseStore((state) => ({
+    store: state.store,
+  }));
   const getSales = async () => {
     const response = await fetch(`${host}/api/sales/fetchallsales`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ store }),
     });
     const json = await response.json();
 
@@ -40,6 +45,10 @@ const SaleChart = () => {
     getSales();
     // eslint-disable-next-line
   }, [location]);
+  useEffect(() => {
+    getSales();
+    // eslint-disable-next-line
+  }, [store]);
   let data = sales.map((sale) => {
     const newSale = {
       date: sale.date,

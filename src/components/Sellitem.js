@@ -12,7 +12,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 const Sellitem = () => {
   const [show, setShow] = useState(false);
-  const [move, setMove] = useState(false);
   const [recieved, setRecieved] = useState("");
   const submitRef = useRef(null);
   const [item, setItem] = useState({
@@ -22,8 +21,9 @@ const Sellitem = () => {
     party: "",
   });
 
-  const { itemNames, getItemNames } = useWarehouseStore((state) => ({
+  const { itemNames, getItemNames, store } = useWarehouseStore((state) => ({
     itemNames: state.itemNames,
+    store: state.store,
     getItemNames: state.getItemNames,
   }));
   const { host, sales, setSales } = useSaleStore((state) => ({
@@ -33,9 +33,13 @@ const Sellitem = () => {
   }));
 
   useEffect(() => {
-    getItemNames();
+    getItemNames(store);
     // eslint-disable-next-line
   }, []);
+  useEffect(() => {
+    getItemNames(store);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store]);
 
   const handleClose = () => {
     setShow(false);
@@ -72,14 +76,11 @@ const Sellitem = () => {
             progress: undefined,
             theme: "light",
           });
-          setMove(false);
         } else {
           console.log("its tro tho");
-          setMove(true);
         }
       })
       .catch((err) => {
-        setMove(false);
         console.log("hi");
       });
   };
@@ -119,6 +120,7 @@ const Sellitem = () => {
             price: totalPrice,
             quantity,
             party,
+            store,
           }),
         });
         const newJson = await newRes.json();

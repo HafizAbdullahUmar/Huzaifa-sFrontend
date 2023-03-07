@@ -8,9 +8,11 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { toast } from "react-toastify";
 import useWarehouseStore from "../store/warehouseStore";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 function NavbarComponent() {
   const [show, setShow] = useState(false);
+  const [selectedStore, setSelectedStore] = useState("Hafiz Trader 1");
   const [id, setId] = useState({
     email: "",
     password: "",
@@ -21,7 +23,18 @@ function NavbarComponent() {
     isLoggedIn: state.isLoggedIn,
     setIsLoggedIn: state.setIsLoggedIn,
   }));
+  const { setStore } = useWarehouseStore((state) => ({
+    setStore: state.setStore,
+  }));
 
+  const handleStore = (e) => {
+    setSelectedStore(e.target.name);
+    if (e.target.name === "Hafiz Trader 1") {
+      setStore("1");
+    } else if (e.target.name === "Hafiz Trader 2") {
+      setStore("2");
+    }
+  };
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -74,9 +87,27 @@ function NavbarComponent() {
               <Nav.Link>Sales</Nav.Link>
             </LinkContainer>
             {isLoggedIn ? (
-              <LinkContainer to={"/owner"}>
-                <Nav.Link>Owner</Nav.Link>
-              </LinkContainer>
+              <>
+                <LinkContainer to={"/owner"}>
+                  <Nav.Link>Owner</Nav.Link>
+                </LinkContainer>
+                <NavDropdown title={selectedStore} id="basic-nav-dropdown">
+                  <NavDropdown.Item
+                    name="Hafiz Trader 1"
+                    onClick={(e) => handleStore(e)}
+                  >
+                    Hafiz Trader 1
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    name="Hafiz Trader 2"
+                    onClick={(e) => {
+                      handleStore(e);
+                    }}
+                  >
+                    Hafiz Trader 2
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </>
             ) : (
               ""
             )}

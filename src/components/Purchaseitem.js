@@ -11,7 +11,6 @@ import { Autocomplete, TextField } from "@mui/material";
 
 const Purchaseitem = () => {
   const [show, setShow] = useState(false);
-  const [move, setMove] = useState(false);
   const [gave, setGave] = useState("");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [item, setItem] = useState({
@@ -21,19 +20,27 @@ const Purchaseitem = () => {
     party: "",
   });
 
-  const { itemNames, getItemNames, host } = useWarehouseStore((state) => ({
-    itemNames: state.itemNames,
-    getItemNames: state.getItemNames,
-    host: state.host,
-  }));
+  const { itemNames, getItemNames, host, store } = useWarehouseStore(
+    (state) => ({
+      itemNames: state.itemNames,
+      getItemNames: state.getItemNames,
+      host: state.host,
+      store: state.store,
+    })
+  );
   const { setPurchases, purchases } = useSaleStore((state) => ({
     purchases: state.purchases,
     setPurchases: state.setPurchases,
   }));
   useEffect(() => {
-    getItemNames();
+    getItemNames(store);
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    getItemNames(store);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store]);
   const handleClose = () => {
     setShow(false);
     setGave("");
@@ -69,14 +76,11 @@ const Purchaseitem = () => {
             progress: undefined,
             theme: "light",
           });
-          setMove(false);
         } else {
           console.log("its tro tho");
-          setMove(true);
         }
       })
       .catch((err) => {
-        setMove(false);
         console.log("hi");
       });
   };
@@ -91,7 +95,7 @@ const Purchaseitem = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, quantity, price }),
+      body: JSON.stringify({ name, quantity, price, store }),
     }).then(async (res) => {
       const json = await res.json();
       if (!json.success) {
@@ -119,6 +123,7 @@ const Purchaseitem = () => {
             price: totalPrice,
             quantity,
             party,
+            store,
           }),
         });
         const newJson = await newRes.json();
@@ -197,6 +202,15 @@ const Purchaseitem = () => {
             <Form.Group className="mb-3" controlId="name">
               <Form.Label>Item Name:</Form.Label>
               <Autocomplete
+                onChange={(event, value) => {
+                  const e = {
+                    target: {
+                      value: value,
+                      name: "name",
+                    },
+                  };
+                  onChange(e);
+                }}
                 freeSolo
                 id="combo-box-demo"
                 options={itemNames}
@@ -205,6 +219,9 @@ const Purchaseitem = () => {
                   <TextField
                     name="name"
                     onChange={(e, value) => {
+                      onChange(e);
+                    }}
+                    onFocus={(e, value) => {
                       onChange(e);
                     }}
                     {...params}

@@ -3,6 +3,7 @@ const host = "http://192.168.10.2:5000";
 const warehouseStore = (set) => ({
   host: host,
   items: [],
+  store: "1",
   editItem: "",
   editModale: false,
   isLoggedIn: false,
@@ -12,12 +13,18 @@ const warehouseStore = (set) => ({
       isLoggedIn: bool,
     }));
   },
-  getItemNames: async (state) => {
+  setStore: (input) => {
+    set((state) => ({
+      store: input,
+    }));
+  },
+  getItemNames: async (store) => {
     const response = await fetch(`${host}/api/items/fetchitemnames`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ store }),
     });
     const json = await response.json();
     set((state) => ({

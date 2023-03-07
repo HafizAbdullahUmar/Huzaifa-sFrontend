@@ -15,6 +15,7 @@ import moment from "moment";
 import { useLocation } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import useWarehouseStore from "../store/warehouseStore";
 
 const PurchaseChart = () => {
   const location = useLocation();
@@ -25,12 +26,16 @@ const PurchaseChart = () => {
     host: state.host,
     setPurchases: state.setPurchases,
   }));
+  const { store } = useWarehouseStore((state) => ({
+    store: state.store,
+  }));
   const getPurchases = async () => {
     const response = await fetch(`${host}/api/sales/fetchallpurchases`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ store }),
     });
     const json = await response.json();
 
@@ -40,6 +45,10 @@ const PurchaseChart = () => {
     getPurchases();
     // eslint-disable-next-line
   }, [location]);
+  useEffect(() => {
+    getPurchases();
+    // eslint-disable-next-line
+  }, [store]);
   let data = purchases.map((purchase) => {
     const newPurchase = {
       date: purchase.date,

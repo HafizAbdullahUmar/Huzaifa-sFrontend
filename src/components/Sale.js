@@ -4,38 +4,33 @@ import useSaleStore from "../store/saleStore";
 import TransactionItem from "./TransactionItem";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
+import useWarehouseStore from "../store/warehouseStore";
 
 const Sale = () => {
-  const { sales, setSales, setPurchases, host } = useSaleStore((state) => ({
+  const { sales, setSales, host } = useSaleStore((state) => ({
     host: state.host,
     sales: state.sales,
     setSales: state.setSales,
-    setPurchases: state.setPurchases,
+  }));
+  const { store } = useWarehouseStore((state) => ({
+    store: state.store,
   }));
   const getSales = async () => {
     const response = await fetch(`${host}/api/sales/fetchallsales`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ store }),
     });
     const json = await response.json();
 
     setSales(json);
   };
-  const getPurchases = async () => {
-    const response = await fetch(`${host}/api/sales/fetchallpurchases`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
-    setPurchases(json);
-  };
+
   useEffect(() => {
     getSales();
-    getPurchases();
+    // getPurchases();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
