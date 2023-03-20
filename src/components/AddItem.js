@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useWarehouseStore from "../store/warehouseStore";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -12,11 +12,16 @@ const AddItem = () => {
     quantity: 0,
     price: 0,
   });
-  const { items, setItems, host } = useWarehouseStore((state) => ({
+  const { items, setItems, host, store } = useWarehouseStore((state) => ({
     items: state.items,
+    store: state.store,
     host: state.host,
     setItems: state.setItems,
   }));
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
   const handleClose = () => {
     setShow(false);
@@ -36,7 +41,7 @@ const AddItem = () => {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("token"),
       },
-      body: JSON.stringify({ name, quantity, price }),
+      body: JSON.stringify({ name, quantity, price, store }),
     })
       .then(async (res) => {
         const tempItem = await res.json();
@@ -99,6 +104,7 @@ const AddItem = () => {
               <Form.Label>Item Name:</Form.Label>
               <Form.Control
                 type="text"
+                autoFocus
                 name="name"
                 placeholder="e.g Dell Mouse"
                 value={item.name}

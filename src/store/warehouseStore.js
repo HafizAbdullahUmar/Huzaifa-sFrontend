@@ -3,6 +3,7 @@ const host = "http://192.168.10.2:5000";
 const warehouseStore = (set) => ({
   host: host,
   items: [],
+  fetchedItem: "",
   store: "1",
   editItem: "",
   editModale: false,
@@ -29,6 +30,19 @@ const warehouseStore = (set) => ({
     const json = await response.json();
     set((state) => ({
       itemNames: json,
+    }));
+  },
+  getItem: async (store, name) => {
+    const response = await fetch(`${host}/api/items/fetchItem`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ store, name }),
+    });
+    const json = await response.json();
+    set((state) => ({
+      fetchedItem: json,
     }));
   },
   setEditModale: (bool) => {

@@ -52,7 +52,7 @@ const SaleChart = () => {
   let data = sales.map((sale) => {
     const newSale = {
       date: sale.date,
-      price: sale.price,
+      total: sale.total,
     };
     return newSale;
   });
@@ -87,15 +87,15 @@ const SaleChart = () => {
   if (dataToShow.length !== 0) {
     total = dataToShow
       .map((obj) => {
-        return parseInt(obj.price);
+        return parseInt(obj.total);
       })
       .reduce((sum, current) => sum + current);
   } else {
-    data = [{ price: 0, date: 0 }];
+    data = [{ total: 0, date: 0 }];
   }
   dataToShow = dataToShow.map((obj) => {
     return {
-      Sale: parseInt(obj.price),
+      Sale: parseInt(obj.total),
       //   date: moment(obj.date).get("date") + "" + moment(obj.date).get("month"),
       date:
         dataValue === "This Month"

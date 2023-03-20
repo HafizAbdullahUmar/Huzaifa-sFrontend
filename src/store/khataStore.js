@@ -4,6 +4,12 @@ const khataStore = (set) => ({
   host: host,
   willRecieve: 0,
   willGive: 0,
+  transactions: [{ price: 0 }],
+  setTransactions: (newTrans) => {
+    set((state) => ({
+      transactions: newTrans,
+    }));
+  },
   setWillRecieve: (newRecieve) => {
     set((state) => ({
       willRecieve: newRecieve,

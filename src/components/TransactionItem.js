@@ -9,15 +9,17 @@ import Form from "react-bootstrap/Form";
 import ReturnSale from "./ReturnSale";
 import useSaleStore from "../store/saleStore";
 import { toast } from "react-toastify";
+import Invoice from "./Invoice";
 
 const TransactionItem = (props) => {
   const { type, color, sOrP } = props;
-  const { name, price, quantity, date, party, status } = sOrP;
+  const { name, total, balance, quantity, date, party } = sOrP;
   const [show, setShow] = useState(false);
   const [item, setItem] = useState({
     ename: "",
     equantity: "",
-    eprice: "",
+    etotal: "",
+    ebalance: "",
     eparty: "",
   });
   const { setPurchases, setSales, purchases, sales, host } = useSaleStore(
@@ -39,7 +41,7 @@ const TransactionItem = (props) => {
     });
   };
   const handleSubmit = async () => {
-    const { ename, equantity, eprice, eparty } = item;
+    const { ename, equantity, etotal, ebalance, eparty } = item;
     if (type === "S") {
       let response = await fetch(`${host}/api/sales/updatesale/${sOrP._id}`, {
         method: "PUT",
@@ -49,7 +51,8 @@ const TransactionItem = (props) => {
         body: JSON.stringify({
           name: ename,
           quantity: equantity,
-          price: eprice,
+          total: etotal,
+          balance: ebalance,
           party: eparty,
         }),
       });
@@ -72,7 +75,8 @@ const TransactionItem = (props) => {
         if (tempSales[i]._id === sOrP._id) {
           tempSales[i].name = ename;
           tempSales[i].quantity = equantity;
-          tempSales[i].price = eprice;
+          tempSales[i].total = etotal;
+          tempSales[i].balance = ebalance;
           tempSales[i].party = eparty;
         }
       }
@@ -89,7 +93,7 @@ const TransactionItem = (props) => {
           body: JSON.stringify({
             name: ename,
             quantity: equantity,
-            price: eprice,
+            price: etotal,
             party: eparty,
           }),
         }
@@ -113,7 +117,7 @@ const TransactionItem = (props) => {
         if (tempPurchases[i]._id === sOrP._id) {
           tempPurchases[i].name = ename;
           tempPurchases[i].quantity = equantity;
-          tempPurchases[i].price = eprice;
+          tempPurchases[i].price = etotal;
           tempPurchases[i].party = eparty;
         }
       }
@@ -136,7 +140,8 @@ const TransactionItem = (props) => {
           setItem({
             ename: name,
             equantity: quantity,
-            eprice: price,
+            etotal: total,
+            ebalance: balance,
             eparty: party,
           });
         }}
@@ -150,31 +155,28 @@ const TransactionItem = (props) => {
             </p>
           </Col>
           <Col md={2}>
+            <p className="item-date">
+              <span className="fw-bold">
+                {sOrP.status ? "Sale" : "Purchase"}
+              </span>
+            </p>
+          </Col>
+          <Col md={2}>
             <p className="item-type fw-bold">{party}</p>
           </Col>
-          <Col md={3}>
+          <Col md={2}>
             <p className="item-name">
-              {" "}
-              <span className="fw-bold">{name}</span>
+              <span className="fw-bold">{total}</span>
             </p>
           </Col>
           <Col md={2}>
             <p className="item-price">
-              <span className="fw-bold">{price}</span>
+              <span className="fw-bold">{balance}</span>
             </p>
           </Col>
-          <Col md={type === "S" ? 1 : 2}>
-            <p className="item-quantity">
-              <span className="fw-bold">{quantity}</span>
-            </p>
+          <Col md={2}>
+            <Invoice item={sOrP} />
           </Col>
-          {type === "S" ? (
-            <Col md={2}>
-              <p className="item-status">
-                <span className="fw-bold">{status}</span>
-              </p>
-            </Col>
-          ) : null}
         </Row>
       </Container>
       <Modal show={show} onHide={handleClose}>

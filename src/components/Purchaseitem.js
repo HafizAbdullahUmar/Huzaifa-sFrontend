@@ -16,7 +16,8 @@ const Purchaseitem = () => {
   const [item, setItem] = useState({
     name: "",
     quantity: "",
-    price: "",
+    total: "",
+    balance: "",
     party: "",
   });
 
@@ -47,13 +48,14 @@ const Purchaseitem = () => {
     setItem({
       name: "",
       quantity: "",
-      price: "",
+      total: "",
+      balance: "",
       party: "",
     });
   };
   const getBalance = () => {
-    const { price, quantity, party } = item;
-    const left = -(quantity * price - gave);
+    const { total, balance, party } = item;
+    const left = total - balance;
 
     fetch(`${host}/api/parties/updateparty`, {
       method: "PUT",
@@ -85,86 +87,74 @@ const Purchaseitem = () => {
       });
   };
   const handleSubmit = async () => {
-    const { name, quantity, price, party } = item;
+    const { name, quantity, total, balance, party } = item;
     getBalance();
 
     setIsSubmitDisabled(true);
+    if (name.length > 0) {
+      const response = await fetch(`${host}/api/items/purchaseitem`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, quantity, store }),
+      });
 
-    fetch(`${host}/api/items/purchaseitem`, {
+      const json = await response.json();
+    }
+    const newRes = await fetch(`${host}/api/sales/addpurchase`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, quantity, price, store }),
-    }).then(async (res) => {
-      const json = await res.json();
-      if (!json.success) {
-        console.log(item);
-        setIsSubmitDisabled(false);
-        return toast.error(json.error, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      } else {
-        const totalPrice = price * quantity;
-        const newRes = await fetch(`${host}/api/sales/addpurchase`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            price: totalPrice,
-            quantity,
-            party,
-            store,
-          }),
-        });
-        const newJson = await newRes.json();
-        if (!newJson.success) {
-          setIsSubmitDisabled(false);
-          return toast.error(newJson.error, {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        } else {
-          setIsSubmitDisabled(false);
-          setShow(false);
-          setItem({
-            name: "",
-            quantity: "",
-            price: "",
-            party: "",
-          });
-          const newPurchases = JSON.parse(JSON.stringify(purchases));
-          newPurchases.push(newJson.savedPurchase);
-          setPurchases(newPurchases);
-
-          toast.success("Purchased Successfully", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        }
-      }
+      body: JSON.stringify({
+        name,
+        total,
+        balance,
+        quantity,
+        party,
+        store,
+      }),
     });
+    const newJson = await newRes.json();
+    console.log(newJson);
+    if (!newJson.success) {
+      setIsSubmitDisabled(false);
+      return toast.error(newJson.error, {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      setIsSubmitDisabled(false);
+      setShow(false);
+      setItem({
+        name: "",
+        quantity: "",
+        total: "",
+        balance: "",
+        party: "",
+      });
+      const newPurchases = JSON.parse(JSON.stringify(purchases));
+      newPurchases.push(newJson.savedPurchase);
+      setPurchases(newPurchases);
+
+      toast.success("Purchased Successfully", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   const onChange = (e) => {
@@ -195,6 +185,7 @@ const Purchaseitem = () => {
               <Form.Control
                 type="text"
                 name="party"
+                autoFocus
                 value={item.party}
                 onChange={onChange}
               />
@@ -237,27 +228,38 @@ const Purchaseitem = () => {
                 type="number"
                 name="quantity"
                 value={item.quantity}
+                disabled={!item.name}
                 onChange={onChange}
                 min={1}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="price">
-              <Form.Label>Price:</Form.Label>
+            <Form.Group className="mb-3" controlId="total">
+              <Form.Label>Total:</Form.Label>
               <Form.Control
                 type="number"
-                name="price"
-                value={item.price}
+                name="total"
+                value={item.total}
+                onChange={onChange}
+                min={1}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="balance">
+              <Form.Label>Paid:</Form.Label>
+              <Form.Control
+                type="number"
+                name="balance"
+                value={item.balance}
                 onChange={onChange}
                 min={1}
               />
             </Form.Group>
           </Form>
-          <p className="h5 tw-normal">
+          {/*    <p className="h5 tw-normal">
             Total Price:{" "}
             {new Intl.NumberFormat("en-IN", {
               maximumSignificantDigits: 3,
             }).format(item.price * item.quantity)}
-          </p>
+          </p> */}
           <Form.Group className="mb-3" controlId="gave">
             <Form.Label>Gave:</Form.Label>
             <Form.Control

@@ -73,7 +73,9 @@ function NavbarComponent() {
       className="p-2"
     >
       <Container fluid>
-        <Navbar.Brand>Huzaifa's Store</Navbar.Brand>
+        <LinkContainer to="/">
+          <Navbar.Brand>Huzaifa's Store</Navbar.Brand>
+        </LinkContainer>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
